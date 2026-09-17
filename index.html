@@ -1,21 +1,128 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>춘천 문학 팝업스토어 | 호반의 시와 음악</title>
-    <meta name="description" content="춘천의 대표 문학작품, 시 구절, 명소 풍경을 결합하여 나만의 문학 엽서와 서정적 음악을 만드는 감성 팝업스토어" />
-
-    <!-- Google & Custom Fonts -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>춘천 감성 뮤직 팝업스토어</title>
+    <!-- Google Fonts for Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@300;400;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <script type="module" crossorigin src="/chuncheon-story-music/assets/index-CAGsgFEm.js"></script>
-    <link rel="stylesheet" crossorigin href="/chuncheon-story-music/assets/index-Dje3uAoW.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Sans+KR:wght@300;400;600;700&family=Noto+Serif+KR:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="bg-container"></div>
+    <div class="overlay"></div>
+
+    <main class="glass-panel" id="app-container">
+        <!-- Step 0: Intro -->
+        <section id="step-intro" class="step active">
+            <h1>당신의 감정,<br>그리고 춘천</h1>
+            <p>당신의 이야기로 1분 노래를 만들어드립니다.</p>
+            <p class="subtitle">나만의 스트리밍을 시작해보세요.</p>
+            <button class="primary-btn" onclick="nextStep(1)">시작하기</button>
+        </section>
+
+        <!-- Step 1: Emotion Selection (New) -->
+        <section id="step-1" class="step">
+            <h2>지금 어떤 감정인가요?</h2>
+            <div class="card-grid" id="emotion-grid">
+                <!-- Dynamically populated -->
+            </div>
+            <div class="button-group mt-2">
+                <button class="secondary-btn" onclick="nextStep(0)">이전</button>
+                <button class="primary-btn" onclick="nextStep(2)" id="btn-step-1" disabled>다음으로</button>
+            </div>
+        </section>
+
+        <!-- Step 2: Line Selection -->
+        <section id="step-2" class="step">
+            <h2>마음에 드는 문장을 골라주세요.</h2>
+            <p class="step-desc">노래의 가사가 됩니다.</p>
+            <div class="list-grid" id="line-grid">
+                <!-- Dynamically populated -->
+            </div>
+            <div class="button-group mt-2">
+                <button class="secondary-btn" onclick="nextStep(1)">이전</button>
+                <button class="primary-btn" onclick="nextStep(3)" id="btn-step-2" disabled>다음으로</button>
+            </div>
+        </section>
+
+        <!-- Step 3: Place Selection -->
+        <section id="step-3" class="step">
+            <h2>배경이 될 장소를 선택해주세요.</h2>
+            <p class="step-desc">노래의 앨범 커버가 됩니다.</p>
+            <div class="card-grid" id="place-grid">
+                <!-- Dynamically populated -->
+            </div>
+            <div class="button-group mt-2">
+                <button class="secondary-btn" onclick="nextStep(2)">이전</button>
+                <button class="primary-btn" onclick="startGeneration()" id="btn-step-3" disabled>노래 생성하기</button>
+            </div>
+        </section>
+
+        <!-- Step 4: Loading (Generation) -->
+        <section id="step-4" class="step">
+            <h2>음원을 믹싱하는 중입니다...</h2>
+            <div class="equalizer">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <p class="step-desc mt-2">당신의 감정과 춘천의 풍경을 엮고 있습니다.</p>
+        </section>
+
+        <!-- Step 5: Music Player Result -->
+        <section id="step-5" class="step">
+            <div class="player-wrapper">
+                <div class="player-header">
+                    <span>Now Playing</span>
+                    <i class="fa-solid fa-ellipsis"></i>
+                </div>
+                
+                <div class="album-cover" id="album-cover">
+                    <!-- Image inserted by JS -->
+                </div>
+
+                <div class="song-info">
+                    <h2 id="song-title">Song Title</h2>
+                    <p id="artist-name">춘천 감성 팝업</p>
+                </div>
+
+                <div class="lyrics-container">
+                    <p class="lyric-line" id="lyric-line1"></p>
+                    <p class="lyric-line" id="lyric-line2"></p>
+                </div>
+
+                <div class="progress-container">
+                    <span class="time" id="current-time">0:00</span>
+                    <div class="progress-bar-bg" onclick="seek(event)">
+                        <div class="progress-bar-fill" id="progress-bar"></div>
+                    </div>
+                    <span class="time" id="total-time">1:00</span>
+                </div>
+
+                <div class="controls">
+                    <button class="icon-btn"><i class="fa-solid fa-backward-step"></i></button>
+                    <button class="icon-btn play-btn" onclick="togglePlay()" id="play-btn">
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                    <button class="icon-btn"><i class="fa-solid fa-forward-step"></i></button>
+                </div>
+            </div>
+            
+            <div class="button-group mt-2">
+                <button class="secondary-btn" onclick="resetApp()" id="reset-btn">다시 만들기</button>
+                <button class="primary-btn" onclick="downloadSong()"><i class="fa-solid fa-download"></i> 저장</button>
+                <button class="primary-btn" onclick="shareSong()"><i class="fa-solid fa-share-nodes"></i> 공유</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
 </html>
